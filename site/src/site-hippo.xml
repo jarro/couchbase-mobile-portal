@@ -79,6 +79,7 @@
         <xi:include href="../../docs/src/guides/couchbase-lite/set.xml"/>
         <xi:include href="../../docs/src/guides/sync-gateway/set.xml"/>
         <xi:include href="../../docs/src/guides/authentication/set.xml"/>
+        <xi:include href="../../docs/src/guides/faq.xml"/>
       </items>
     </set>
     <set id="references">
