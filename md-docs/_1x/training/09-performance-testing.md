@@ -1,7 +1,7 @@
 ---
 id: performance-testing
 title: Performance Testing
-permalink: ready/training/test/performance-testing/index.html
+permalink: training/test/performance/index.html
 ---
 
 In this lesson you'll learn how to perform performance tests on your Couchbase Mobile application. You'll test the performance of Sync Gateway.
@@ -16,6 +16,8 @@ In this lesson you'll learn how to perform performance tests on your Couchbase M
 #### Getting Started
 
 This lesson contains some scripts to run performance tests. Download those scripts below
+
+<button>Download performance testing scripts</button>
 
 ```bash
 wget https://cl.ly/3Z0D2D0l3R0O/test.zip
@@ -159,6 +161,8 @@ In this scenario you will query the database endpoint and measure the time it ta
     95%      289 ms
     99%      367 ms
     ```
+
+## Running on an existing app
 
 ## Conclusion
 

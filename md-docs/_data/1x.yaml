@@ -34,6 +34,10 @@
           path: training/develop/adding-security/index.html
         - title: Integration
           path: training/develop/integration/index.html
+    - title: Test
+      items:
+        - title: Performance
+          path: training/test/performance/index.html
     - title: Deploy
       items:
         - title: Install

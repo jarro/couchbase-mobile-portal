@@ -143,6 +143,18 @@ Document document = mDatabase.getDocument(docId);
 document.putProperties(properties);
 ```
 
+<block class="rn" />
+
+```javascript
+var doc = {
+	type: 'task-list',
+	name: text,
+	_id: `${this.props.owner}.${Math.random().toString(36).substring(7)}`,
+	owner: this.props.owner
+};
+manager.document.post({db: DB_NAME, body: doc});
+```
+
 <block class="all" />
 
 Here you're creating an unsaved document instance with a pre-defined **document ID** (i.e. the **_id** property in the document’s JSON body) using the `documentWithID` method. The ID follows the form `{username}.{uuid}` where username is the name of the user logged in. Alternatively, you could also use the `createDocument` method to let the database generate a random **ID** for you.
@@ -181,6 +193,13 @@ Here you're creating an unsaved document instance with a pre-defined **document 
 2. Create a new list using the '+' button on the application's 'Task lists' screen.
 3. A new list document is saved to the database.
     <img src="img/image40a.png" class="portrait" />
+
+<block class="rn" />
+
+1. Build and run.
+2. Create a new list using the '+' button on the application's 'Task lists' screen.
+3. A new list document is saved to the database.
+    <img src="/img/image40rn.png" class="portrait" />
 
 <block class="all" />
 
@@ -229,7 +248,7 @@ try {
 <block class="android" />
 
 ```java
-// This code can be in ListsActivity.java
+// This code can be found in ListsActivity.java
 // in the updateList(Document) method
 list.update(new Document.DocumentUpdater() {
     @Override
@@ -240,6 +259,15 @@ list.update(new Document.DocumentUpdater() {
         return true;
     }
 });
+```
+
+<block class="rn" />
+
+```javascript
+// This code can be found in Lists/index.js
+// in the updateList(text, doc) method
+doc.name = text;
+manager.document.put({db: DB_NAME, doc: doc._id, body: doc});
 ```
 
 <block class="all" />
@@ -276,7 +304,12 @@ Your callback code can modify this object's properties as it sees fit; after it 
 1. Build and run.
 2. Long press on a row to reveal the action items. Click the update menu to change title of a list.
 
-<img src="img/image04a.png" class="portrait" />
+<block class="rn" />
+
+1. Build and run.
+2. Swipe to the left to reveal the **Edit** button and update the List name in the pop-up.
+
+<img src="/img/image04rn.png" class="portrait" />
 
 > **Challenge:** Modify the code to uppercase the text inserted before persisting the document to the database.
 
@@ -323,6 +356,14 @@ try {
 }
 ```
 
+<block class="rn" />
+
+```javascript
+// This can be found in Lists/index.js
+// in the deleteList(data) method
+manager.document.delete({db: DB_NAME, doc: data.doc._id, rev: data.doc._rev});
+```
+
 <block class="all" />
 
 > **Challenge:** Add a document change listener to detect when the document gets deleted. The [document change notification](/documentation/mobile/1.3/develop/guides/couchbase-lite/native-api/document/index.html#document-change-notifications) documentation will be helpful for this challenge.
@@ -358,6 +399,13 @@ try {
 2. Click the **Delete** action to delete a list.
     <img class="portrait" src="https://cl.ly/262v3o381j2a/image46a.gif" />
 
+<block class="rn" />
+
+1. Build and run.
+2. Swipe to the left to reveal the **Delete** button.
+
+    <img src="/img/image04rn.png" class="portrait" />
+
 <block class="all"/>
 
 ## Query Documents
@@ -366,7 +414,7 @@ The way to query data in Couchbase Lite is by registering a View and then runnin
 
 A [View](/documentation/mobile/current/develop/guides/couchbase-lite/native-api/view/index.html) in Couchbase is a persistent index of documents in a database, which you then query to find data. The main component of a View is its map function. It takes a document’s JSON as input, and emits (outputs) any number of key/value pairs to be indexed. First, you will define the view to index the documents of type **task-list**. The diagram below shows the result of the code you will review shortly.
 
-![](img/img.001.png)
+![](/img/img.001.png)
 
 So you can remember that a view index is a list of key/value pairs, sorted by key. In addition, the view’s logic is written in the native language of the platform you’re developing on. The code below indexes documents as shown on the diagram above. Then it create the Query and monitors the result set using a Live Query.
 
@@ -433,6 +481,27 @@ if (listsView.getMap() == null) {
 listsLiveQuery = listsView.createQuery().toLiveQuery();
 ```
 
+<block class="rn" />
+
+```javascript
+// This code can be found in Lists/index.js
+// in the setupViewAndQuery() method
+manager.query.get_db_design_ddoc_view_view({
+	db: DB_NAME,
+	ddoc: 'main',
+	view: 'listsByName',
+	include_docs: true
+})
+	.then(res => {
+		const rows = res.obj.rows;
+		this.setState({
+			data: rows,
+			dataSource: this.state.dataSource.cloneWithRows(rows),
+		});
+		return
+	});
+```
+
 <block class="all" />
 
 The `viewNamed` method returns a [View](http://developer.couchbase.com/documentation/mobile/current/develop/guides/couchbase-lite/native-api/view/index.html) object on which the map function can be set. The map function is indexing documents where the type property is equal to "task-list". Each cell on the screen will contain a list name and nothing else. For that reason, you can emit the name property as the key and nil is the value. If you also wanted to display the owner of the list in the row you could emit the `owner` property as the value.
@@ -488,6 +557,24 @@ query.addChangeListener(new LiveQuery.ChangeListener() {
 query.start();
 ```
 
+<block class="rn" />
+
+```javascript
+componentDidMount() {
+	manager.database.get_db({db: DB_NAME})
+		.then(res => {
+			this.setupViewAndQuery();
+			this.feed = new Feed(res.obj.update_seq, () => {
+				this.setupViewAndQuery();
+			});
+		});
+}
+
+componentWillUnmount() {
+	this.feed.stop();
+}
+```
+
 <block class="all" />
 
 ### Try it out
@@ -507,6 +594,10 @@ query.start();
 
 <img src="https://cl.ly/44433I102l3q/image66a.gif" class="portrait" />
 
+<block class="rn" />
+
+<img src="https://cl.ly/2T3B0c0V010A/image66rn.gif" class="portrait" />
+
 <block class="all" />
 
 > **Challenge:** Update the map function to emit the document ID as the key. Don't forget to bump the view version whenever you change the map function. The list view should now display the document ID on each row.
@@ -523,7 +614,7 @@ Let’s write a view to query and display the number of uncompleted tasks for ea
 
 The diagram below shows this process.
 
-![](./img/image32.png)
+![](/img/image32.png)
 
 Notice that **groupingLevel = 1** coalesces the rows in the view index by their key.
 
@@ -626,6 +717,28 @@ final LiveQuery incompTasksCountLiveQuery = incompTasksCountView.createQuery().t
 incompTasksCountLiveQuery.setGroupLevel(1);
 ```
 
+<block class="rn" />
+
+```javascript
+// This code can be found in List/index.js
+// in the setupViewAndQuery method
+manager.query.get_db_design_ddoc_view_view({
+	db: DB_NAME,
+	ddoc: 'main',
+	view: 'incompleteTasksCount',
+	group_level: 1
+})
+	.then(res => {
+		const rows = res.obj.rows;
+		var counts = {};
+		for (var i = 0; i < rows.length; i++) {
+			const row = rows[i];
+			counts[row.key] = row.value;
+		}
+		this.setState({counts: counts});
+	});
+```
+
 <block class="all" />
 
 This time, you call emit only if the document `type` is "task" and `complete` is `false`. The document ID of the list it belongs to (**doc.taskList._id**) serves as the key and the value is nil. The reduce function simply counts the number of rows with the same key. Notice that the **groupLevel** is a property on the live query object.
@@ -713,6 +826,10 @@ incompTasksCountLiveQuery.start();
 <block class="android" />
 
 <img src="img/image08a.png" class="portrait" />
+
+<block class="rn" />
+
+<img src="/img/image08rn.png" class="portrait" />
 
 <block class="all" />
 

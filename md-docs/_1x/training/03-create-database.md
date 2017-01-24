@@ -20,7 +20,7 @@ Download the project below.
 
 <div class="buttons-unit downloads">
   <a href="https://cl.ly/1Y3W3s2e1D0y/project.zip" class="button" id="project">
-    <img src="img/download-xcode.png">
+    <img src="/img/download-xcode.png">
   </a>
 </div>
 
@@ -45,7 +45,7 @@ Download the project below.
 
 <div class="buttons-unit downloads">
   <a href="https://cl.ly/1Y3W3s2e1D0y/project.zip" class="button" id="project">
-    <img src="img/download-vs.png">
+    <img src="/img/download-vs.png">
   </a>
 </div>
 
@@ -64,9 +64,13 @@ Download the project below.
 
 <div class="buttons-unit downloads">
   <a href="https://cl.ly/1Y3W3s2e1D0y/project.zip" class="button" id="project">
-    <img src="img/download-android.png">
+    <img src="/img/download-android.png">
   </a>
 </div>
+
+<block class="rn" />
+
+> **Note:** This example focuses on using React Native but the same exact code can use in a PhoneGap application.
 
 [//]: # "COMMON ACROSS LESSONS"
 
@@ -141,6 +145,16 @@ try {
 }
 ```
 
+<block class="rn" />
+
+```javascript
+// This code be found in DataManager.js
+// in the setupDatabase() method
+manager.database.put_db({db: DB_NAME})
+	.then(() => this.startDatabaseOperations())
+	.catch(e => console.warn(e));
+```
+
 <block class="all" />
 
 Here you're using the `openDatabaseNamed` method where the database is the user currently logged in and `options.create` is set to `true`.
@@ -170,6 +184,10 @@ Here you're using the `openDatabaseNamed` method where the database is the user 
 <block class="android" />
 
 <img src="img/image40a.png" class="portrait" />
+
+<block class="rn" />
+
+<img src="/img/rn-create-list.png" class="portrait" />
 
 <block class="all" />
 
@@ -243,6 +261,16 @@ if (database == null) {
 }
 ```
 
+<block class="rn" />
+
+```javascript
+installPrebuiltDb() {
+	if (USE_PREBUILT_DB) {
+		Couchbase.installPrebuiltDatabase(DB_NAME);
+	}
+},
+```
+
 <block class="all" />
 
 The prebuilt database is installed using the database replacement API only if there isn't any existing database called 'todo'. Since you created an empty database called 'todo' in the previous step you must first remove the existing database.
@@ -289,6 +317,14 @@ The prebuilt database is installed using the database replacement API only if th
 3. A Groceries list will now be visible on the Lists screen. Click on it to see the tasks.
 
     <img src="https://cl.ly/2z4715010K2Z/image45a.gif" class="portrait" />
+
+<block class="rn" />
+
+1. Open **DataManager.js** and set the `USE_PREBUILT_DB` constant to true.
+2. Build and run (⚠️ don't forget to delete the app first).
+3. A Groceries list will now be visible on the Lists screen. Click on it to see the tasks.
+
+    <img src="https://cl.ly/292q2i1c3b3V/image45rn.gif" class="portrait" />
 
 <block class="all" />
 
