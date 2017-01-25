@@ -216,6 +216,16 @@ pusher.start();
 puller.start();
 ```
 
+<block class="rn" />
+
+```javascript
+const sgUrl = `http://${username}:${password}@${SG_HOST}`;
+
+return manager.server.post_replicate({body: {source: sgUrl, target: DB_NAME, continuous: true}})
+	.then(res => manager.server.post_replicate({body: {source: DB_NAME, target: sgUrl, continuous: true}}))
+	.catch(e => console.warn(e));
+```
+
 <block class="all" />
 
 ### Try it out
@@ -288,6 +298,25 @@ puller.start();
 
     <img src="./img/image19a.png" />
 
+<block class="rn" />
+
+1. In **DataManager.js**, set `SG_HOST` to the URL of the Sync Gateway database (http://localhost:4984/todo/).
+
+    ```javascript
+    global.SG_HOST = 'localhost:4984/todo';
+    ```
+
+2. Set `SYNC_ENABLED` to `true` in **DataManager.js**.
+
+    ```javascript
+    const SYNC_ENABLED = true;
+    ```
+
+3. Build and run.
+4. Open [http://localhost:4985/_admin/db/todo](http://localhost:4985/_admin/db/todo) in the browser and notice that all the documents are pushed to Sync Gateway! You may have more or less rows depending on how many documents are present in the Couchbase Lite database.
+
+    <img src="/img/image19a.png" />
+
 <block class="all" />
 
 ## Resolve Conflicts
@@ -300,7 +329,7 @@ Due to the unpredictability of mobile connections it's inevitable that more than
 
 Revisions form a tree data structure and a conflict occurs when there are multiple branches in the revision tree. On the diagram below the conflict is resolved by deleting one branch of the tree (the branch starting at **3-42cc**). The other one is the active branch (i.e the winner) where further child revisions can be persisted (**4-45cb** and **5-42bb**).
 
-<img src="img/image16.png" class="portrait" />
+<img src="/img/image16.png" class="portrait" />
 
 ### Detecting conflicts
 
