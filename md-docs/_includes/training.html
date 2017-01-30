@@ -1,0 +1,143 @@
+<style>
+  #sticky {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 50px;
+    width: 100%;
+    z-index: 9999;
+    background-color: black;
+    padding-top: 3px;
+  }
+</style>
+<nav id="sticky">
+  <div class="toggler">
+    <style>
+      .toggler a {
+        display: inline-block;
+        padding: 10px 5px;
+        margin: 2px;
+        border: 1px solid white;
+        border-radius: 3px;
+        text-decoration: none !important;
+        color: white;
+      }
+      .display-platform-ios .toggler .button-ios,
+      .display-platform-android .toggler .button-android,
+      .display-platform-rn .toggler .button-rn,
+      .display-platform-wpf .toggler .button-wpf,
+      .display-platform-xam .toggler .button-xam,
+      .display-platform-rn .toggler .button-rn {
+        background-color: #05A5D1;
+        color: white;
+      }
+
+      block { display: none; }
+
+      .display-platform-ios .ios,
+      .display-platform-android .android,
+      .display-platform-rn .rn,
+      .display-platform-net .net,
+      .display-platform-wpf .wpf,
+      .display-platform-xam .xam,
+      .display-platform-rn .rn,
+      .display-platform-all .all {
+        display: block;
+      }</style>
+    <div id="platform-tabs" class="hide">
+      <span>Platform:</span>
+      <a href="javascript:void(0);" class="button-ios" onclick="display('platform', 'ios')">iOS</a>
+      <a href="javascript:void(0);" class="button-android" onclick="display('platform', 'android')">Android</a>
+      <a href="javascript:void(0);" class="button-wpf" onclick="display('platform', 'wpf')">WPF</a>
+      <a href="javascript:void(0);" class="button-rn" onclick="display('platform', 'rn')">RN</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Logic for platform tabs -->
+<script>
+  // Only show on Develop pages
+  var blocks = document.getElementsByClassName('ios');
+  if (blocks.length > 0) {
+    var platformTabs = document.getElementById('platform-tabs');
+    platformTabs.className = "show";
+  }
+  // Convert <div>...<span><block /></span>...</div>
+  // Into <div>...<block />...</div>
+  var blocks = document.getElementsByTagName('block');
+  for (var i = 0; i < blocks.length; ++i) {
+    var block = blocks[i];
+    var span = blocks[i].parentNode;
+    var container = span.parentNode;
+    container.insertBefore(block, span);
+    container.removeChild(span);
+  }
+  // Convert <div>...<block />content<block />...</div>
+  // Into <div>...<block>content</block><block />...</div>
+  blocks = document.getElementsByTagName('block');
+  for (var i = 0; i < blocks.length; ++i) {
+    var block = blocks[i];
+    while (block.nextSibling && block.nextSibling.tagName !== 'BLOCK') {
+      block.appendChild(block.nextSibling);
+    }
+  }
+  function display(type, value) {
+    var container = document.getElementsByTagName('block')[0].parentNode;
+    container.className = 'display-' + type + '-' + value;
+    if (value == 'wpf' || value == 'xam') {
+      container.className += ' display-platform-net';
+    }
+    container.className += ' display-platform-all';
+    setCookie('codeLanguage', value);
+  }
+
+  // If we are coming to the page with a hash in it (i.e. from a search, for example), try to get
+  // us as close as possible to the correct platform and dev os using the hashtag and block walk up.
+  var foundHash = false;
+  if (window.location.hash !== '' && window.location.hash !== 'content') { // content is default
+    var platform = window.location.hash.slice(1);
+    if (['ios', 'android', 'wpf'].indexOf(platform) > -1) {
+      display('platform', platform);
+      foundHash = true;
+    }
+  }
+  function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+  }
+  function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+  console.log(getCookie('codeLanguage'));
+  switch(getCookie('codeLanguage')) {
+    case 'swift':
+      display('platform', 'ios');
+      break;
+    case 'objective-c':
+      display('platform', 'ios');
+      break;
+    case 'android':
+      display('platform', 'android');
+      break;
+    case 'wpf':
+      display('platform', 'c');
+      break;
+    case 'rn':
+      display('platform', 'rn');
+      break;
+  }
+</script>
