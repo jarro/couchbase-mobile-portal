@@ -42,6 +42,8 @@ redcarpet:
 
 exclude:
   - "*.screenflow"
+  - "node_modules"
 
 keep_files:
   - "references"
+  - "assets"
